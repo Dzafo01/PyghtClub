@@ -9,7 +9,6 @@ class SpielElement(ABC):
     speed_y: int
     is_jump_active: bool
     
-    
 
     def __init__(
         self, x: float, y: float, speed_x: float, speed_y: float
@@ -22,8 +21,10 @@ class SpielElement(ABC):
         
 
     def update(self, delta_time: float):
-        self.x += self.speed_x
         self.y += self.speed_y
+        self.x += self.speed_x
+      
+        
 
     
 
