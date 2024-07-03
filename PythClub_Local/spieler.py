@@ -21,8 +21,8 @@ class Spieler(SpielElement):
     speed_y : float
     cooldown : float
     on_cooldown : bool
-    
-    
+    timer:float
+   
 
     def __init__(self, x: float, y: float) -> None:
         super().__init__(x, y,80,40) 
@@ -32,7 +32,18 @@ class Spieler(SpielElement):
         self.speed_y = 0
         self.cooldown = 0
         self.on_cooldown = True
-        
+        self.timer = 30  
+       
+    
+    def setup(self):
+        self.health = 100
+        self.speed_x = 0
+        self.speed_y = 0
+        self.cooldown = 0
+        self.on_cooldown = True
+        self.player_dead = False
+        self.timer = 30     
+    
     def zeichne_healthbar_P1(self):     
         #ratio = self.health / 100
         #if self.health < 0:
@@ -48,6 +59,11 @@ class Spieler(SpielElement):
         arcade.draw_xywh_rectangle_filled(349,499,202,32,arcade.color.WHITE)
         arcade.draw_xywh_rectangle_filled(350,500,200*ratio,30,arcade.color.RED)      
     
+    def zeichne_timer(self):
+        seconds = int(self.timer) % 60
+        timer_text = f"{seconds:02d}"
+        arcade.draw_text(timer_text, 300, 510, arcade.color.WHITE, 20, anchor_x="center")
+
         
 
     def zeichne(self):
@@ -55,11 +71,9 @@ class Spieler(SpielElement):
         self.attack.zeichne()  
         self.zeichne_healthbar_P1()
         self.zeichne_healthbar_P2()
-        
+        self.zeichne_timer()  
         
 
-       
-      
     def update(self, delta_time: float):
         for message in mq.popAll("NEUE_USER_EINGABE"):
             if isinstance(message, NeueUserEingabe):
@@ -88,6 +102,12 @@ class Spieler(SpielElement):
         if (self.cooldown > 40):
             self.cooldown = 0
             self.on_cooldown = True
+        
+        self.timer -= delta_time
+        if self.timer <= 0:
+            self.timer = 0
+            self.reset_fighter()
+
 
     def beschleunige_x_pos(self):
         self.x += 5
@@ -108,8 +128,10 @@ class Spieler(SpielElement):
         if isinstance(elem,Permanent):
             self.x= elem.x - elem.width 
 
-
-  
+    def reset_fighter(self):
+        self.setup()
+        self.zeichne()
+   
 
               
 
@@ -145,7 +167,7 @@ class Attack(SpielElement):  # neu
         if elem != self.spieler:
             elem.health -= 10
             # self.text = self.shuffle_text()
-            
+           
              
 
     def zeichne(self):
