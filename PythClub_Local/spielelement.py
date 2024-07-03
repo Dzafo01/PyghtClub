@@ -5,26 +5,32 @@ import math
 class SpielElement(ABC):
     x: float
     y: float
-    speed_x: int
-    speed_y: int
-    is_jump_active: bool
+    height: float
+    width : float
+    
     
 
     def __init__(
-        self, x: float, y: float, speed_x: float, speed_y: float
+        self, x: float, y: float,  height:float,width:float
     ) -> None:
         self.x = x
-        self.y = y
-        self.speed_x = speed_x
-        self.speed_y = speed_y
+        self.y = y 
+        self.height = height
+        self.width = width  
+       
         
         
 
     def update(self, delta_time: float):
-        self.y += self.speed_y
-        self.x += self.speed_x
+        ...
       
-        
+    def hat_kollision(self, elem: 'SpielElement') -> bool:
+        return (abs(self.x - elem.x)< self.width) & (abs(self.y - elem.y)<self.height)
+
+    @abstractmethod
+    def on_collision(self, elem: 'SpielElement'):
+            ...
+
 
     
 
