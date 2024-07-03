@@ -33,13 +33,28 @@ class Spieler(SpielElement):
         self.cooldown = 0
         self.on_cooldown = True
         
+    def zeichne_healthbar_P1(self):     
+        #ratio = self.health / 100
+        #if self.health < 0:
+         #   ratio = 0
+        arcade.draw_xywh_rectangle_filled(49,499,202,32,arcade.color.WHITE)
+        arcade.draw_xywh_rectangle_filled(50,500,200,30,arcade.color.RED) #  pfusch lösung
+       
         
+    def zeichne_healthbar_P2(self):       
+        ratio = self.health / 100
+        if self.health < 0:
+            ratio= 0
+        arcade.draw_xywh_rectangle_filled(349,499,202,32,arcade.color.WHITE)
+        arcade.draw_xywh_rectangle_filled(350,500,200*ratio,30,arcade.color.RED)      
     
         
 
     def zeichne(self):
         arcade.draw_xywh_rectangle_filled(self.x, self.y,self.width ,self.height, arcade.color.AMARANTH_PINK)
-        self.attack.zeichne()  # neu
+        self.attack.zeichne()  
+        self.zeichne_healthbar_P1()
+        self.zeichne_healthbar_P2()
         
         
 
