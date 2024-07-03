@@ -54,8 +54,7 @@ class EingabeFilter:
         if self.bewegungstasten_p1[key.R]:
             mq.queue(NeueUserEingabe(UserEingabe.PUNCH_P1))    ## neu
         if self.bewegungstasten_p1[key.T]:
-            mq.queue(NeueUserEingabe(UserEingabe.KICK_P1))      #  # neu      
-       
+            mq.queue(NeueUserEingabe(UserEingabe.KICK_P1))      #  # neu        
         if self.bewegungstasten_p2[key.J] and not self.bewegungstasten_p2[key.L]:
             mq.queue(NeueUserEingabe(UserEingabe.LINKS_P2))
         elif self.bewegungstasten_p2[key.L] and not self.bewegungstasten_p2[key.J]:

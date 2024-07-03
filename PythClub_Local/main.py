@@ -18,11 +18,9 @@ class GameEngine(Window):
 
     def __init__(self, breite: int = 600, hoehe: int = 600):
         super().__init__(breite, hoehe)
-
         self.breite = breite
         self.hoehe = hoehe
         self.eingabefilter = EingabeFilter()
-
         self.welt = Arena(breite, hoehe)
 
     def on_update(self, delta_time: float):
