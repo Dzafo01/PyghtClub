@@ -11,6 +11,14 @@ class NeuesSpielElement(Message):
         super().__init__('NEUES_SPIEL_ELEMENT')
         self.elem = elem
 
+class NeueHitMessage(Message):
+
+    elem: SpielElement
+
+    def __init__(self, elem: SpielElement) -> None:
+        super().__init__('NEUE_HIT_MESSAGE')
+        self.elem = elem
+
 
 class UserEingabe(Enum):
     SPRINGEN_P1 = 0

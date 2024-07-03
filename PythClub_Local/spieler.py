@@ -1,4 +1,6 @@
 # standard
+from typing import Protocol
+import random
 
 # vendor
 import arcade
@@ -12,12 +14,14 @@ from messages import NeueUserEingabe, UserEingabe
 from interfaces import Temporaer,Permanent
 
 
+
 class Spieler(SpielElement):
     health:float
     speed_x: float
     speed_y : float
     cooldown : float
     on_cooldown : bool
+    
     
 
     def __init__(self, x: float, y: float) -> None:
@@ -29,28 +33,15 @@ class Spieler(SpielElement):
         self.cooldown = 0
         self.on_cooldown = True
         
-    def zeichne_healthbar_P1(self):        ###
-        #ratio = self.health / 100
-        #if self.health < 0:
-         #   ratio = 0
-        arcade.draw_xywh_rectangle_filled(49,499,202,32,arcade.color.WHITE)
-        arcade.draw_xywh_rectangle_filled(50,500,200,30,arcade.color.RED) #  pfusch lösung
-       
         
-    def zeichne_healthbar_P2(self):        ###
-        ratio = self.health / 100
-        if self.health < 0:
-            ratio= 0
-        arcade.draw_xywh_rectangle_filled(349,499,202,32,arcade.color.WHITE)
-        arcade.draw_xywh_rectangle_filled(350,500,200*ratio,30,arcade.color.RED)  
     
         
 
     def zeichne(self):
         arcade.draw_xywh_rectangle_filled(self.x, self.y,self.width ,self.height, arcade.color.AMARANTH_PINK)
         self.attack.zeichne()  # neu
-        self.zeichne_healthbar_P1()
-        self.zeichne_healthbar_P2()
+        
+        
 
        
       
@@ -101,9 +92,15 @@ class Spieler(SpielElement):
     def on_collision(self, elem: 'SpielElement'):
         if isinstance(elem,Permanent):
             self.x= elem.x - elem.width 
+
+
+  
+
               
 
 class Attack(SpielElement):  # neu
+    is_left : bool
+    text : 'Hit_Text'
     
     def __init__(self, spieler: Spieler):
         self.spieler = spieler
@@ -113,6 +110,8 @@ class Attack(SpielElement):  # neu
         self.y = spieler.y
         self.height = spieler.height
         self.width = spieler.width
+        self.is_left = False
+        self.text = Hit_Text
       
 
     def punch(self):
@@ -122,26 +121,78 @@ class Attack(SpielElement):  # neu
     def kick(self):
         if self.spieler.on_cooldown == True: #neu
             self.is_kicking = True
+
+    def shuffle_text(self):
+        rand = random.choice([Hit.hit_text(self),Hit_2.hit_text(self),Hit_3.hit_text(self),Hit_4.hit_text(self)])
+        return rand
     
     def on_collision(self, elem: 'Spieler'):
         if elem != self.spieler:
             elem.health -= 10
+            # self.text = self.shuffle_text()
             
+             
 
     def zeichne(self):
-        self.x = self.spieler.x + 40
+        if (self.is_left):
+            self.x = self.spieler.x + self.spieler.width
+        else:
+            self.x = self.spieler.x - self.spieler.width
         if self.is_punching:
             arcade.draw_xywh_rectangle_filled(self.x, self.spieler.y + self.spieler.height / 2, self.spieler.width , self.spieler.height / 2, arcade.color.RED)
             self.is_punching = False  # Reset after drawing
         if self.is_kicking:
             arcade.draw_xywh_rectangle_filled(self.x, self.spieler.y, self.spieler.width, self.spieler.height / 2, arcade.color.RED)
             self.is_kicking = False  # Reset after drawing
+        # if self.hat_kollision():
+        #     self.text.draw()
+            
+    
+
+
+class Hit_Text(Protocol):
+    def hit_text(self) -> None:
+        raise NotImplementedError
+    
+
+class Hit():
+
+    def __init__(self, spieler: Spieler):
+        self.spieler = spieler
+
+    def hit_text(self):
+        return arcade.Text('KRACH!',150,150,arcade.color.WHITE)
+        
+    
+class Hit_2():
+
+    def __init__(self, spieler: Spieler):
+        self.spieler = spieler
+
+    def hit_text(self):
+        return arcade.Text('Autschi',150,150,arcade.color.WHITE)
+        
+    
+class Hit_3():
+
+    def __init__(self, spieler: Spieler):
+        self.spieler = spieler
+
+    def hit_text(self):
+        return arcade.Text('BOOM BOOM BOOM',150,150,arcade.color.WHITE)
+    
+class Hit_4():
+
+    def __init__(self, spieler: Spieler):
+        self.spieler = spieler
+
+    def hit_text(self):
+        return arcade.Text('Katsching',150,150,arcade.color.WHITE)
     
 
 
 
-# draw healthbar in spieler -> zeichne()
-# 2. spieler inputs und schlag/tritt drehen
+# 2. spieler inputs 
 # runde gewonnen -> zurücksetzen der arena und zähler aus 1 : 0
 # Spiel gewonnen -> 2 von 3 runden gewonnen -> Spiel gewonnen schriftzug und spiel zurücksetzen
 # draw verschiedene textnachrichten über spieler wenn spieler gehittet (Protokoll)   

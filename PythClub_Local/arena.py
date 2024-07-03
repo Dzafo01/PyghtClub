@@ -25,9 +25,12 @@ class Arena:
     def update(self, delta_time: float):
         for objekt in self.elemente: 
             objekt.update(delta_time)
+            
         self._korrigiere_positionen()
         self.hitbox(self.elemente[0])
         self._behandle_kollisionen()
+        
+
         
       
     def hitbox(self, delta_time:float ):
@@ -58,6 +61,11 @@ class Arena:
     def _behandle_kollisionen(self):
         for a in self.elemente:
             for b in self.elemente:
+                if isinstance(a, Permanent) & isinstance(b, Permanent):
+                    if(a.x < b.x):
+                        a.attack.is_left = True
+                    else:
+                        a.attack.is_left = False
                 if a == b:
                     continue
                 if a.hat_kollision(b):
