@@ -18,17 +18,31 @@ class Arena:
     def __init__(self, breite: int, hoehe: int) -> None:
         self.breite = breite
         self.hoehe = hoehe
+        self._init_elemente()  
+
+    def _init_elemente(self): 
         self.elemente = []
         self.elemente.append(Spieler(50, 50))
         self.elemente.append(Spieler(510, 50))
-
+    
+    
     def update(self, delta_time: float):
         for objekt in self.elemente: 
             objekt.update(delta_time)
-            
         self._korrigiere_positionen()
+        self._check_health()  
         self.hitbox(self.elemente[0])
         self._behandle_kollisionen()
+          
+    def _check_health(self):  
+        for objekt in self.elemente:
+            if isinstance(objekt, Spieler) and objekt.health <= 0:
+                self.reset_arena()
+
+    def reset_arena(self):  
+        self._init_elemente()         
+            
+       
         
 
         
