@@ -10,7 +10,7 @@ import arcade
 # custom
 from spielelement import SpielElement
 from message_queue import message_queue as mq
-from messages import NeueUserEingabe, UserEingabe
+from messages import NeueUserEingabe_P1,NeueUserEingabe_P2, UserEingabe
 from interfaces import Temporaer,Permanent
 
 
@@ -22,9 +22,10 @@ class Spieler(SpielElement):
     cooldown : float
     on_cooldown : bool
     timer:float
+    player : int       
    
 
-    def __init__(self, x: float, y: float) -> None:
+    def __init__(self, x: float, y: float, player:int) -> None:
         super().__init__(x, y,80,40) 
         self.attack = Attack(self) # neu
         self.health = 100
@@ -32,7 +33,8 @@ class Spieler(SpielElement):
         self.speed_y = 0
         self.cooldown = 0
         self.on_cooldown = True
-        self.timer = 30  
+        self.timer = 30 
+        self.player = player
        
     
     def setup(self):
@@ -45,11 +47,11 @@ class Spieler(SpielElement):
         self.timer = 30     
     
     def zeichne_healthbar_P1(self):     
-        #ratio = self.health / 100
-        #if self.health < 0:
-         #   ratio = 0
+        ratio = self.health / 100
+        if self.health < 0:
+           ratio = 0
         arcade.draw_xywh_rectangle_filled(49,499,202,32,arcade.color.WHITE)
-        arcade.draw_xywh_rectangle_filled(50,500,200,30,arcade.color.RED) #  pfusch lösung
+        arcade.draw_xywh_rectangle_filled(50,500,200*ratio,30,arcade.color.RED) #  pfusch lösung
        
         
     def zeichne_healthbar_P2(self):       
@@ -68,33 +70,58 @@ class Spieler(SpielElement):
 
     def zeichne(self):
         arcade.draw_xywh_rectangle_filled(self.x, self.y,self.width ,self.height, arcade.color.AMARANTH_PINK)
-        self.attack.zeichne()  
-        self.zeichne_healthbar_P1()
-        self.zeichne_healthbar_P2()
+        self.attack.zeichne()
+        if self.player == 1:  
+            self.zeichne_healthbar_P1()
+        elif self.player == 2:
+            self.zeichne_healthbar_P2()
         self.zeichne_timer()  
         
 
     def update(self, delta_time: float):
-        for message in mq.popAll("NEUE_USER_EINGABE"):
-            if isinstance(message, NeueUserEingabe):
-                if message.ereignis == UserEingabe.SPRINGEN_P1:
-                    self.springen()
-                elif message.ereignis == UserEingabe.DUCKEN_P1:
-                    self.ducken()
-                else:
-                    self.height=80
-                if message.ereignis == UserEingabe.LINKS_P1:
-                    self.beschleunige_x_neg()
-                elif message.ereignis == UserEingabe.RECHTS_P1:
-                    self.beschleunige_x_pos()
-                elif message.ereignis == UserEingabe.KEINE_EINGABE_P1:
-                    self.speed_x=0
-                elif message.ereignis == UserEingabe.PUNCH_P1: # neu
-                    self.attack.punch()
-                    self.on_cooldown = False
-                elif message.ereignis == UserEingabe.KICK_P1: # neu
-                    self.attack.kick()
-                    self.on_cooldown = False       
+        if self.player == 1:
+            for message in mq.popAll("NEUE_USER_EINGABE_P1"):
+                if isinstance(message, NeueUserEingabe_P1):   
+                    if message.ereignis == UserEingabe.SPRINGEN_P1:
+                        self.springen()
+                    elif message.ereignis == UserEingabe.DUCKEN_P1:
+                        self.ducken()
+                    else:
+                        self.height=80
+                    if message.ereignis == UserEingabe.LINKS_P1:
+                        self.beschleunige_x_neg()
+                    elif message.ereignis == UserEingabe.RECHTS_P1:
+                        self.beschleunige_x_pos()
+                    elif message.ereignis == UserEingabe.KEINE_EINGABE_P1:
+                        self.speed_x=0
+                    elif message.ereignis == UserEingabe.PUNCH_P1: # neu
+                        self.attack.punch()
+                        self.on_cooldown = False
+                    elif message.ereignis == UserEingabe.KICK_P1: # neu
+                        self.attack.kick()
+                        self.on_cooldown = False 
+        if self.player == 2:
+            for message in mq.popAll("NEUE_USER_EINGABE_P2"):
+                if isinstance(message, NeueUserEingabe_P2):    
+                    if message.ereignis == UserEingabe.SPRINGEN_P2:
+                        print('springen')
+                        self.springen()
+                    elif message.ereignis == UserEingabe.DUCKEN_P2:
+                        self.ducken()
+                    else:
+                        self.height=80
+                    if message.ereignis == UserEingabe.LINKS_P2:
+                        self.beschleunige_x_neg()
+                    elif message.ereignis == UserEingabe.RECHTS_P2:
+                        self.beschleunige_x_pos()
+                    elif message.ereignis == UserEingabe.KEINE_EINGABE_P2:
+                        self.speed_x=0
+                    elif message.ereignis == UserEingabe.PUNCH_P2: # neu
+                        self.attack.punch()
+                        self.on_cooldown = False
+                    elif message.ereignis == UserEingabe.KICK_P2: # neu
+                        self.attack.kick()
+                        self.on_cooldown = False
         self.y += self.speed_y
         self.x += self.speed_x
         if(self.on_cooldown == False):
