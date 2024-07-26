@@ -1,9 +1,7 @@
 from message_queue import message_queue as mq
-from messages import NeuesSpielElement
 from spielelement import SpielElement
 from spieler import Spieler
 from typing import List
-from spieler import Attack
 from interfaces import Permanent,Temporaer
 
 

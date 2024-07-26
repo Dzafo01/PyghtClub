@@ -6,8 +6,6 @@ from arena import Arena
 
 
 
-
-
 class GameEngine(Window):
 
     breite: int
