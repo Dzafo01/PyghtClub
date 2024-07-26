@@ -62,7 +62,7 @@ class Spieler(SpielElement):
 
         if self.player == 1:
             self.current_texture = self.standing_texture
-        if self.player == 2:
+        elif self.player == 2:
             self.current_texture = self.standing_texture_spiegel
 
     def setup(self):
@@ -124,19 +124,21 @@ class Spieler(SpielElement):
         Args:
             action (str): Die Aktion, die der Spieler ausführt (stehen, schlagen, treten, stehen_spiegel, schlagen_spiegel, treten_spiegel).
         """
-        if action == "stehen":
-            self.current_texture = self.standing_texture
-        elif action == "schlagen":
-            self.current_texture = self.punching_texture
-        elif action == "treten":
-            self.current_texture = self.kicking_texture
 
-        elif action == "stehen_spiegel":
-            self.current_texture = self.kicking_texture_spiegel
-        elif action == "schlagen_spiegel":
-            self.current_texture = self.punching_texture_spiegel
-        elif action == "treten_spiegel":
-            self.current_texture = self.kicking_texture_spiegel
+        if self.player == 1:
+            if action == "stehen":
+                self.current_texture = self.standing_texture
+            elif action == "schlagen":
+                self.current_texture = self.punching_texture
+            elif action == "treten":
+                self.current_texture = self.kicking_texture
+        elif self.player == 2:
+            if action == "stehen_spiegel":
+                self.current_texture = self.standing_texture_spiegel
+            elif action == "schlagen_spiegel":
+                self.current_texture = self.punching_texture_spiegel
+            elif action == "treten_spiegel":
+                self.current_texture = self.kicking_texture_spiegel
 
     def zeichne(self):
         """
@@ -217,6 +219,7 @@ class Spieler(SpielElement):
             self.cooldown = 0
             self.on_cooldown = True
             self.set_texture("stehen")
+            self.set_texture("stehen_spiegel")
 
         self.timer -= delta_time
         if self.timer <= 0:
